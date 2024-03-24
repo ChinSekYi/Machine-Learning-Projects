@@ -58,7 +58,7 @@ def df_null_removal(df):
     # Scale the imputed data
     X_scaled_df = normalise(X_imputed)
 
-    return pd.concat([X_scaled_df, y], axis=1)
+    return X_scaled_df, y
 
 
 def drop_high_corr(df, threshold=0.7):
@@ -94,11 +94,11 @@ def drop_high_corr(df, threshold=0.7):
                 print(f"Feature '{feature2}' not found in the DataFrame.")
 
     return df
-
+'''
 def df_null_corr_process(df):
     X, y = df_null_removal(df)
     return drop_high_corr(X),y
-
+'''
 def pre_process(df):
     X, y = get_Xy(df)
     X_imputed, y_final = med_impute(X, y)
