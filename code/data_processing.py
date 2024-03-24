@@ -113,7 +113,6 @@ def get_train_test(df):
     X_imputed, y_final = med_impute(X, y)
     X_scaled = normalise(X_imputed)
     X_final = drop_high_corr(X_scaled)
-
     X_train, X_test, y_train, y_test = train_test_split(X_final, y_final, test_size=0.2, random_state=3244)
 
     return X_train, X_test, y_train, y_test
