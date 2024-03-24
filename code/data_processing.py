@@ -95,7 +95,8 @@ def drop_high_corr(df, threshold=0.7):
     return df
 
 def df_null_corr_process(df):
-    return drop_high_corr(df_null_removal(df))
+    X, y = df_null_removal(df)
+    return drop_high_corr(X),y
 
 
 def pre_process(df):
