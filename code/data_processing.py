@@ -36,7 +36,7 @@ def med_impute(df, y):
     df = df[df.isnull().sum(axis=1) <= thd2]
 
     # median imputation for null values
-    df.fillna(df.median())
+    df = df.fillna(df.median())
 
     return df, y
 
@@ -116,3 +116,4 @@ def get_train_test(df):
     X_train, X_test, y_train, y_test = train_test_split(X_final, y_final, test_size=0.2, random_state=3244)
 
     return X_train, X_test, y_train, y_test
+    
