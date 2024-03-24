@@ -3,20 +3,22 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 from scipy.io import arff
-import data_processing
 from sklearn.feature_selection import SelectKBest, f_classif
+
+import data_processing
 
 data = arff.loadarff("../data/3year.arff")
 df = pd.DataFrame(data[0])
 df_origin = df.copy()
 
+
 def get_df_with_top_k_features(k_features, df_x, df_y):
-    print(df.shape) #(4885, 64)
+    print(df.shape)  # (4885, 64)
     print(len(df.columns))
 
-    #df_x, df_y = get_Xy(df)
-    #df_x = df.iloc[:, :-1].to_numpy()
-    #df_y = df.iloc[:, -1].to_numpy()
+    # df_x, df_y = get_Xy(df)
+    # df_x = df.iloc[:, :-1].to_numpy()
+    # df_y = df.iloc[:, -1].to_numpy()
 
     # define feature selection
     fs = SelectKBest(score_func=f_classif, k=k_features)
@@ -37,7 +39,8 @@ def get_df_with_top_k_features(k_features, df_x, df_y):
     selected_columns = df.iloc[:, selected_indices]
     return selected_columns
 
-k_features= 25
+
+k_features = 25
 df_x, df_y = data_processing.pre_process(df)
 df1 = get_df_with_top_k_features(k_features, df)
 print(df.iloc[:, len(df.columns) - 1])

@@ -1,9 +1,8 @@
 import numpy as np
 import pandas as pd
+from sklearn.feature_selection import SelectKBest, f_classif
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
-from sklearn.feature_selection import SelectKBest, f_classif
-
 
 """
 functions starting with df_ can generate a processed dataframe directly
@@ -95,8 +94,10 @@ def drop_high_corr(df, threshold=0.7):
                 df.drop(feature2, axis=1, inplace=True)
                 dropped_features.append(feature2)
             else:
-                #print(f"Feature {feature2} not found in the DataFrame.")
-                print("Feature '" + feature2 + "' not found in the DataFrame.") #temporary 
+                # print(f"Feature {feature2} not found in the DataFrame.")
+                print(
+                    "Feature '" + feature2 + "' not found in the DataFrame."
+                )  # temporary
 
     return df
 
