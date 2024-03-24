@@ -39,7 +39,9 @@ def med_impute(df, y):
 
 def normalise(df):
     scaler = MinMaxScaler()
-    X_scaled_df = pd.DataFrame(scaler.fit_transform(df), columns=df.columns)
+    X_scaled = pd.DataFrame(scaler.fit_transform(df), columns=df.columns)
+
+    return X_scaled
 
 
 def df_null_removal(df):
