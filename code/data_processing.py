@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
+from imblearn.over_sampling import SMOTE
 from sklearn.model_selection import train_test_split
 
 '''
@@ -106,8 +107,10 @@ def pre_process(df):
     X = X.fillna(X.median())
     X = normalise(X)
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=0)
-    
-    return X_train, X_test, y_train, y_test
+    smote = SMOTE(random_state=10)
+    X_smote, y_smote = smote.fit_resample(X_train, y_train)
+   
+    return X_smote, X_test, y_smote, y_test
 
 def get_train_test(df):
 
