@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
+from sklearn.model_selection import train_test_split
 
 '''
 functions starting with df_ can generate a processed dataframe directly
@@ -95,6 +96,7 @@ def drop_high_corr(df, threshold=0.7):
     return df
 
 def df_null_corr_process(df):
+
     return drop_high_corr(df_null_removal(df))
 
 
@@ -103,4 +105,16 @@ def pre_process(df):
     X_imputed, y_final = med_impute(X, y)
     X_scaled = normalise(X_imputed)
     X_final = drop_high_corr(X_scaled)
+
     return X_final, y_final
+
+def get_train_test(df):
+
+    X, y = get_Xy(df)
+    X_imputed, y_final = med_impute(X, y)
+    X_scaled = normalise(X_imputed)
+    X_final = drop_high_corr(X_scaled)
+
+    X_train, X_test, y_train, y_test = train_test_split(X_final, y_final, test_size=0.2, random_state=3244)
+
+    return X_train, X_test, y_train, y_test
