@@ -35,10 +35,4 @@ def med_impute(df, y):
 
 def null_removal(df):
     scaler = MinMaxScaler()
-
-    X_scaled = scaler.fit_transform(df)
-    X_scaled_df = pd.DataFrame(X_scaled, columns=df.columns)
-
-    # without changing column names
-    x_scaled_origin = scaler.fit_transform(X_imputed)
-    X_scaled_df_origin = pd.DataFrame(x_scaled_origin, columns=X_imputed.columns)
+    X_scaled_df = pd.DataFrame(scaler.fit_transform(df), columns=df.columns)
