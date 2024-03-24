@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 
+
 def as_discrete(col):
     n = len(col)
     new_col = [0] * n
