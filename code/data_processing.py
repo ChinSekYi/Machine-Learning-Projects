@@ -1,11 +1,14 @@
 import numpy as np
 import pandas as pd
-from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.feature_selection import SelectKBest, f_classif
 
-'''
+
+"""
 functions starting with df_ can generate a processed dataframe directly
-'''
+"""
+
 
 def as_discrete(col):
     n = len(col)
@@ -62,7 +65,6 @@ def df_null_removal(df):
 
 
 def drop_high_corr(df, threshold=0.7):
-
     correlation_matrix = df.corr()
     high_cor = []
     dropped_features = []
@@ -72,11 +74,13 @@ def drop_high_corr(df, threshold=0.7):
         for j in range(i):
             if abs(correlation_matrix.iloc[i, j]) > threshold:
                 if correlation_matrix.columns[j] != correlation_matrix.columns[i]:
-                    high_cor.append([
-                        correlation_matrix.columns[i],
-                        correlation_matrix.columns[j],
-                        correlation_matrix.iloc[i, j]
-                    ])
+                    high_cor.append(
+                        [
+                            correlation_matrix.columns[i],
+                            correlation_matrix.columns[j],
+                            correlation_matrix.iloc[i, j],
+                        ]
+                    )
 
     # Iterate through the list of highly correlated pairs
     for pair in high_cor:
@@ -91,21 +95,26 @@ def drop_high_corr(df, threshold=0.7):
                 df.drop(feature2, axis=1, inplace=True)
                 dropped_features.append(feature2)
             else:
-                print(f"Feature '{feature2}' not found in the DataFrame.")
+                #print(f"Feature {feature2} not found in the DataFrame.")
+                print("Feature '" + feature2 + "' not found in the DataFrame.") #temporary 
 
     return df
 
+
 def df_null_corr_process(df):
     X, y = df_null_removal(df)
-    return drop_high_corr(X),y
+    return drop_high_corr(X), y
+
 
 def pre_process(df):
     X, y = get_Xy(df)
     X_imputed, y_final = med_impute(X, y)
     X_scaled = normalise(X_imputed)
+    print(X_scaled.shape)
     X_final = drop_high_corr(X_scaled)
 
     return X_final, y_final
+
 
 def get_train_test(df):
 
@@ -113,7 +122,29 @@ def get_train_test(df):
     X_imputed, y_final = med_impute(X, y)
     X_scaled = normalise(X_imputed)
     X_final = drop_high_corr(X_scaled)
-    X_train, X_test, y_train, y_test = train_test_split(X_final, y_final, test_size=0.2, random_state=3244)
+    X_train, X_test, y_train, y_test = train_test_split(
+        X_final, y_final, test_size=0.2, random_state=3244
+    )
 
     return X_train, X_test, y_train, y_test
-    
+
+
+def get_df_with_top_k_features(k_features, X_train, X_test, y_train, y_test):
+    # define feature selection
+    fs = SelectKBest(score_func=f_classif, k=k_features)
+
+    # apply feature selection
+    X_selected = fs.fit_transform(X_train, y_train)
+
+    # Take the features with the highest F-scores
+    fs_scores_array = np.array(fs.scores_)
+
+    # Get the indices that would sort the array in descending order
+    sorted_indices_desc = np.argsort(fs_scores_array)[::-1]
+
+    # Take the top k indices
+    top_indices = sorted_indices_desc[:k_features]
+
+    X_train_with_selected_x = X_train.iloc[:, top_indices]
+    X_test_with_selected_x = X_test.iloc[:, top_indices]
+    return X_train_with_selected_x, X_test_with_selected_x, y_train, y_test
