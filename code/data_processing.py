@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 
+
 def as_discrete(col):
     n = len(col)
     new_col = [0] * n
@@ -12,10 +13,12 @@ def as_discrete(col):
             new_col[i] = 1
     return pd.DataFrame(new_col)
 
+
 def get_Xy(df):
-    X = df.iloc[:, 0:len(df)-1]
+    X = df.iloc[:, 0 : len(df) - 1]
     y = as_discrete(df.iloc[:, -1])
     return X, y
+
 
 def med_impute(df, y):
     # remove columns with more than 40% values being null
@@ -32,6 +35,7 @@ def med_impute(df, y):
     df.fillna(df.median())
 
     return df, y
+
 
 def normalise(df):
     scaler = MinMaxScaler()

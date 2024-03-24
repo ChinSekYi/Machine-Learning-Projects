@@ -85,6 +85,7 @@ df.columns = names
 
 """Convert target column to discrete classes"""
 
+
 def as_discrete(col):
     n = len(col)
     new_col = [0] * n
@@ -95,10 +96,12 @@ def as_discrete(col):
             new_col[i] = 1
     return pd.DataFrame(new_col)
 
+
 def get_Xy(df):
-    X = df_origin.iloc[:, 0:len(df)-1]
+    X = df_origin.iloc[:, 0 : len(df) - 1]
     y = as_discrete(df.iloc[:, -1])
     return X, y
+
 
 X, y = get_Xy(df)
 
@@ -132,6 +135,7 @@ print(columns_with_many_nulls)
 
 """From the above result, we found that column `Attr37` which corresponds to `(current assets - inventories) / long-term liabilities` has more than 40% of the entries being null. Keeping this column can introduce noise and unnecessary complexity without adding meaningful insights. Therefore we decide to drop the it from our predictor variables."""
 
+
 # function for null removal
 def med_impute(df, y):
 
@@ -149,6 +153,7 @@ def med_impute(df, y):
     df.fillna(df.median())
 
     return df, y
+
 
 X_imputed, y = med_impute(X, y)
 
@@ -346,6 +351,20 @@ top_indices = sorted_indices_desc[:n_features_to_select]
 
 print(f"Indices of best attributes for out model: {top_indices}")
 
+# Find the best top k features such that the linear regression model have the lowest MSE
+
+# Take the features with the highest F-scores
+n_features_to_select = 25
+fs_scores_array = np.array(fs.scores_)
+
+# Get the indices that would sort the array in descending order
+sorted_indices_desc = np.argsort(fs_scores_array)[::-1]
+
+# Take the top 25 indices
+top_indices = sorted_indices_desc[:n_features_to_select]
+
+print(f"Indices of best attributes for out model: {top_indices}")
+
 """#### t-test for linear regression
 We use a linear regression model to predict bankruptcy.
 Use t-test to check the significance of each attribute in predicting bankruptcy for each company.
@@ -355,21 +374,30 @@ We found out that out of the 63 attributes, only 46 of them are significant, and
 # Linear regression - test significance
 import statsmodels.api as sm
 
-x_features = sm.add_constant(df_x)
-ols_model = sm.OLS(df_y, x_features)
-fit_results = ols_model.fit()
-print(fit_results.summary())
 
-# Extract p-values
-p_values = fit_results.pvalues
-# print(p_values)
+def linear_regression_model(k_features, df_x, df_y):
+    x_features = sm.add_constant(df_x)
+    ols_model = sm.OLS(df_y, x_features)
+    fit_results = ols_model.fit()
+    print(fit_results.summary())
 
-# Count the number of items greater than 0.05
-count_greater_than_005 = np.sum(p_values > 0.05)
-indices_greater_than_005 = np.where(p_values > 0.05)[0]
+    # Extract p-values
+    p_values = fit_results.pvalues
+    # print(p_values)
 
-print(
-    f"Number of attributes that are not significant: {count_greater_than_005} / {len(df.columns) - 1}"
-)
-print(f"Indices of attributes greater than 0.005: {indices_greater_than_005}")
+    # Count the number of items greater than 0.05
+    count_greater_than_005 = np.sum(p_values > 0.05)
+    indices_greater_than_005 = np.where(p_values > 0.05)[0]
 
+    print(
+        f"Number of attributes that are not significant: {count_greater_than_005} / {len(df.columns) - 1}"
+    )
+    # print(f"Indices of attributes greater than 0.005: {indices_greater_than_005}")
+
+    MSE = fit_results.mse_total
+    print(f"MSE: {MSE}")
+    return
+
+
+k_features = 25
+linear_regression_model(k_features, df_x, df_y)
