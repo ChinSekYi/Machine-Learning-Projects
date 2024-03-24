@@ -2,6 +2,21 @@ import numpy as np
 import pandas as pd
 from sklearn import minmaxscaler
 
+def as_discrete(col):
+    n = len(col)
+    new_col = [0] * n
+    for i in range(n):
+        if col[i] == b"0":
+            new_col[i] = 0
+        else:
+            new_col[i] = 1
+    return pd.DataFrame(new_col)
+
+def get_Xy(df):
+    X = df_origin.iloc[:, 0:len(df)-1]
+    y = as_discrete(df.iloc[:, -1])
+    return X, y
+
 def null_removal(df):
     # Define a function to convert binary columns to discrete
     def as_discrete(col):
