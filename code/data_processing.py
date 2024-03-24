@@ -1,34 +1,38 @@
 import numpy as np
 import pandas as pd
-from sklearn import minmaxscaler
+from sklearn.preprocessing import MinMaxScaler
 
-def null_removal(df):
-    # Define a function to convert binary columns to discrete
-    def as_discrete(col):
-        n = len(col)
-        new_col = [0] * n
-        for i in range(n):
-            if col[i] == b'0':
-                new_col[i] = 0
-            else:
-                new_col[i] = 1
-        return pd.DataFrame(new_col)
+def as_discrete(col):
+    n = len(col)
+    new_col = [0] * n
+    for i in range(n):
+        if col[i] == b"0":
+            new_col[i] = 0
+        else:
+            new_col[i] = 1
+    return pd.DataFrame(new_col)
 
-    # Extract features (X) and target (y)
-    X = df.iloc[:, :-1]
+def get_Xy(df):
+    X = df.iloc[:, 0:len(df)-1]
     y = as_discrete(df.iloc[:, -1])
+    return X, y
 
-    # Remove rows where more than half of the entries are null
-    threshold = X.shape[1] / 2  # Total number of columns divided by 2
-    X_clean = X[X.isnull().sum(axis=1) <= threshold]
+def med_impute(df, y):
+    # remove columns with more than 40% values being null
+    thd1 = df.shape[0] * 0.4
+    cols = df.columns[df.isnull().sum() < thd1]
+    df = df[cols]
 
-    # Impute missing values with the median
-    X_imputed = X_clean.fillna(X_clean.median())
+    # remove rows with more than 50% values being null
+    thd2 = df.shape[1] * 0.5
+    y = y[df.isnull().sum(axis=1) <= thd2]
+    df = df[df.isnull().sum(axis=1) <= thd2]
+
+    # median imputation for null values
+    df.fillna(df.median())
+
+    return df, y
+
+def normalise(df):
     scaler = MinMaxScaler()
-
-    X_scaled = scaler.fit_transform(df)
-    X_scaled_df = pd.DataFrame(X_scaled, columns=df.columns)
-
-    # without changing column names
-    x_scaled_origin = scaler.fit_transform(X_imputed)
-    X_scaled_df_origin = pd.DataFrame(x_scaled_origin, columns=X_imputed.columns)
+    X_scaled_df = pd.DataFrame(scaler.fit_transform(df), columns=df.columns)
