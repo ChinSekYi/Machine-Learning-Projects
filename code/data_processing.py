@@ -110,16 +110,17 @@ def df_null_corr_process(df):
 
 def pre_process(df):
     X, y = get_Xy(df)
-    X_imputed, y_final = med_impute(X, y)
-    X_scaled = normalise(X_imputed)
-    print(X_scaled.shape)
-    X_final = drop_high_corr(X_scaled)
-
-    return X_final, y_final
+    X, y = med_impute(X, y)   
+    X = normalise(X)
+    X = drop_high_corr(X, threshold=0.7)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=1000)
+    smote = SMOTE(random_state=0)
+    X_smote, y_smote = smote.fit_resample(X_train, y_train)
+   
+    return X_smote, X_test, y_smote, y_test
 
 
 def get_train_test(df):
-
     X, y = get_Xy(df)
     X_imputed, y_final = med_impute(X, y)
     X_scaled = normalise(X_imputed)
