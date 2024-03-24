@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from sklearn.feature_selection import SelectKBest, f_classif
+from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
 
@@ -60,7 +60,7 @@ def df_null_removal(df):
     # Scale the imputed data
     X_scaled_df = normalise(X_imputed)
 
-    return pd.concat([X_scaled_df, y], axis=1)
+    return X_scaled_df, y
 
 
 def drop_high_corr(df, threshold=0.7):
@@ -101,17 +101,14 @@ def drop_high_corr(df, threshold=0.7):
 
     return df
 
-
 def df_null_corr_process(df):
     X, y = df_null_removal(df)
-    return drop_high_corr(X), y
-
+    return drop_high_corr(X),y
 
 def pre_process(df):
     X, y = get_Xy(df)
     X_imputed, y_final = med_impute(X, y)
     X_scaled = normalise(X_imputed)
-    print(X_scaled.shape)
     X_final = drop_high_corr(X_scaled)
 
     return X_final, y_final
@@ -123,12 +120,9 @@ def get_train_test(df):
     X_imputed, y_final = med_impute(X, y)
     X_scaled = normalise(X_imputed)
     X_final = drop_high_corr(X_scaled)
-    X_train, X_test, y_train, y_test = train_test_split(
-        X_final, y_final, test_size=0.2, random_state=3244
-    )
+    X_train, X_test, y_train, y_test = train_test_split(X_final, y_final, test_size=0.2, random_state=3244)
 
     return X_train, X_test, y_train, y_test
-
 
 def get_df_with_top_k_features(k_features, X_train, X_test, y_train, y_test):
     # define feature selection
