@@ -91,3 +91,11 @@ def drop_high_corr(df, threshold=0.7):
 
 def df_null_corr_process(df):
     return drop_high_corr(df_null_removal(df))
+
+
+def pre_process(df):
+    X, y = get_Xy(df)
+    X_imputed, y_final = med_impute(X, y)
+    X_scaled = normalise(X_imputed)
+    X_final = drop_high_corr(X_scaled)
+    return X_final, y_final
