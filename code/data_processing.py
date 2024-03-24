@@ -101,11 +101,11 @@ def df_null_corr_process(df):
 '''
 def pre_process(df):
     X, y = get_Xy(df)
-    X_imputed, y_final = med_impute(X, y)
-    X_scaled = normalise(X_imputed)
-    X_final = drop_high_corr(X_scaled)
-
-    return X_final, y_final
+    X = X.fillna(X.median())
+    X = normalise(X)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=0)
+    
+    return X_train, X_test, y_train, y_test
 
 def get_train_test(df):
 
