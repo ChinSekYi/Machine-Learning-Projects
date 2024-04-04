@@ -78,9 +78,9 @@ X62	(short-term liabilities *365) / sales
 X63	sales / short-term liabilities
 X64	sales / fixed assets
 
-## Set up environment 
+## Set up virtual environment 
 ```
-conda create -n dev python=3.11 numpy pandas scikit-learn imbalanced-learn matplotlib seaborn scipy
+conda create -n dev python=3.11 numpy pandas scikit-learn imbalanced-learn matplotlib seaborn scipy tqdm
 ```
 
 ```
