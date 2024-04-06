@@ -139,12 +139,14 @@ def plot_ANOVA_test_graph(train_acc_dict, test_acc_dict):
     # Extract keys and values from train_acc_dict and test_acc_dict
     train_k_values, train_accuracy_values = zip(*train_acc_dict.items())
     test_k_values, test_accuracy_values = zip(*test_acc_dict.items())
-    
-    plt.figure(figsize=(6, 4)) 
+
+    plt.figure(figsize=(6, 4))
     # Plot train accuracy
-    plt.plot(train_k_values, train_accuracy_values, label='Train Accuracy', color='blue')
+    plt.plot(
+        train_k_values, train_accuracy_values, label="Train Accuracy", color="blue"
+    )
     # Plot test accuracy
-    plt.plot(test_k_values, test_accuracy_values, label='Test Accuracy', color='green')
+    plt.plot(test_k_values, test_accuracy_values, label="Test Accuracy", color="green")
 
     # Find k values corresponding to maximum accuracies
     best_train_k = max(train_acc_dict, key=train_acc_dict.get)
@@ -153,23 +155,27 @@ def plot_ANOVA_test_graph(train_acc_dict, test_acc_dict):
     best_test_accuracy = test_acc_dict[best_test_k]
 
     # Annotate the point corresponding to the peak train accuracy
-    plt.annotate(f'Max Train Accuracy\nk={best_train_k}, Acc={best_train_accuracy:.2f}',
-                xy=(best_train_k, best_train_accuracy),
-                xytext=(-30, 20),
-                textcoords='offset points',
-                arrowprops=dict(arrowstyle='->', color='blue'))
+    plt.annotate(
+        f"Max Train Accuracy\nk={best_train_k}, Acc={best_train_accuracy:.2f}",
+        xy=(best_train_k, best_train_accuracy),
+        xytext=(-30, 20),
+        textcoords="offset points",
+        arrowprops=dict(arrowstyle="->", color="blue"),
+    )
 
     # Annotate the point corresponding to the peak test accuracy
-    plt.annotate(f'Max Test Accuracy\nk={best_test_k}, Acc={best_test_accuracy:.2f}',
-                xy=(best_test_k, best_test_accuracy),
-                xytext=(30, -30),
-                textcoords='offset points',
-                arrowprops=dict(arrowstyle='->', color='green'))
+    plt.annotate(
+        f"Max Test Accuracy\nk={best_test_k}, Acc={best_test_accuracy:.2f}",
+        xy=(best_test_k, best_test_accuracy),
+        xytext=(30, -30),
+        textcoords="offset points",
+        arrowprops=dict(arrowstyle="->", color="green"),
+    )
 
     # Label axes and add title
-    plt.xlabel('Number of Features (k)')
-    plt.ylabel('Accuracy')
-    plt.title('Accuracy vs. Number of Features from ANOVA test')
+    plt.xlabel("Number of Features (k)")
+    plt.ylabel("Accuracy")
+    plt.title("Accuracy vs. Number of Features from ANOVA test")
 
     plt.legend()
     plt.show()
@@ -210,7 +216,7 @@ def find_best_k_features_from_ANOVA(model, *args):
     original_n_features = len(X_train.columns)
 
     # find the optimum number of features that gives the best test accuracy
-    train_acc_dict = {} #0 is a dummy accuracy for k=0 features
+    train_acc_dict = {}  # 0 is a dummy accuracy for k=0 features
     test_acc_dict = {}
 
     for k in range(1, original_n_features + 1):
