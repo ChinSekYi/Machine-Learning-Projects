@@ -83,6 +83,7 @@ To ensure collaboraters have the same packages and versions installed.
 
 Install anaconda: https://docs.anaconda.com/free/miniconda/index.html  
 For windows installation guide: https://docs.conda.io/projects/conda/en/latest/user-guide/install/windows.html  
+
 To check if conda is installed
 ```
 cd /your directory/..
