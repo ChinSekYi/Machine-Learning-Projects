@@ -15,10 +15,8 @@ def as_discrete(col):
     n = len(col)
     new_col = [0] * n
     for i in range(n):
-        if col[i] == b"0":
-            new_col[i] = 0
-        else:
-            new_col[i] = 1
+        if col[i] == b"0": new_col[i] = 0
+        else: new_col[i] = 1
     return pd.DataFrame(new_col)
 
 # function to separate features and target 
