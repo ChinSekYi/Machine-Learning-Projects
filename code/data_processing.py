@@ -10,7 +10,7 @@ from sklearn.preprocessing import MinMaxScaler
 functions starting with df_ can generate a processed dataframe directly
 """
 
-
+# function to convert target column to binary values o and 1
 def as_discrete(col):
     n = len(col)
     new_col = [0] * n
@@ -21,13 +21,13 @@ def as_discrete(col):
             new_col[i] = 1
     return pd.DataFrame(new_col)
 
-
+# function to separate features and target 
 def get_Xy(df):
     X = df.iloc[:, 0 : len(df.columns) - 1]
     y = as_discrete(df.iloc[:, -1])
     return X, y
 
-
+# function to handle missing values 
 def med_impute(df, y):
     # remove columns with more than 40% values being null
     thd1 = df.shape[0] * 0.4
@@ -44,27 +44,21 @@ def med_impute(df, y):
 
     return df, y
 
-
+# function to normalise numerical columns to remove effect of inconsistent scales
 def normalise(df):
     scaler = MinMaxScaler()
     X_scaled = pd.DataFrame(scaler.fit_transform(df), columns=df.columns)
 
     return X_scaled
 
-
+# preliminary cleaning
 def df_null_removal(df):
-    # Extract features (X) and target (y)
     X, y = get_Xy(df)
-
-    # Remove null values and impute missing values
     X_imputed, y = med_impute(X, y)
-
-    # Scale the imputed data
     X_scaled_df = normalise(X_imputed)
-
     return X_scaled_df, y
 
-
+# funciton for feature selection
 def drop_high_corr(df, threshold=0.7):
     correlation_matrix = df.corr()
     high_cor = []
@@ -76,12 +70,9 @@ def drop_high_corr(df, threshold=0.7):
             if abs(correlation_matrix.iloc[i, j]) > threshold:
                 if correlation_matrix.columns[j] != correlation_matrix.columns[i]:
                     high_cor.append(
-                        [
-                            correlation_matrix.columns[i],
-                            correlation_matrix.columns[j],
-                            correlation_matrix.iloc[i, j],
-                        ]
-                    )
+                        [correlation_matrix.columns[i],
+                         correlation_matrix.columns[j],
+                         correlation_matrix.iloc[i, j],])
 
     # Iterate through the list of highly correlated pairs
     for pair in high_cor:
@@ -110,10 +101,7 @@ def df_null_corr_process(df):
 
 
 def pre_process(df):
-    X, y = get_Xy(df)
-    X, y = med_impute(X, y)
-    X = normalise(X)
-    X = drop_high_corr(X, threshold=0.7)
+    X, y = df_null_corr_process(df)
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.3, random_state=1000
     )
