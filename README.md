@@ -79,10 +79,24 @@ X63	sales / short-term liabilities
 X64	sales / fixed assets
 
 ## Set up virtual environment 
+To ensure collaboraters have the same packages and versions installed. 
 ```
-conda create -n dev python=3.11 numpy pandas scikit-learn imbalanced-learn matplotlib seaborn scipy tqdm
+conda create -n dev python=3.11 numpy pandas scikit-learn imbalanced-learn matplotlib seaborn scipy tqdm black isort
 ```
 
 ```
 conda activate dev
+```
+
+Work on individual branch 
+```
+git checkout -b branchname
+```
+
+To merge individual branch to main branch
+```
+git checkout main
+git merge branchname
+git commit -m "Merge branchname branch into main"
+git push origin main
 ```
