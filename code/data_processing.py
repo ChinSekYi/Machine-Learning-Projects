@@ -10,22 +10,27 @@ from sklearn.preprocessing import MinMaxScaler
 functions starting with df_ can generate a processed dataframe directly
 """
 
+
 # function to convert target column to binary values o and 1
 def as_discrete(col):
     n = len(col)
     new_col = [0] * n
     for i in range(n):
-        if col[i] == b"0": new_col[i] = 0
-        else: new_col[i] = 1
+        if col[i] == b"0":
+            new_col[i] = 0
+        else:
+            new_col[i] = 1
     return pd.DataFrame(new_col)
 
-# function to separate features and target 
+
+# function to separate features and target
 def get_Xy(df):
     X = df.iloc[:, 0 : len(df.columns) - 1]
     y = as_discrete(df.iloc[:, -1])
     return X, y
 
-# function to handle missing values 
+
+# function to handle missing values
 def med_impute(df, y):
     # remove columns with more than 40% values being null
     thd1 = df.shape[0] * 0.4
@@ -42,6 +47,7 @@ def med_impute(df, y):
 
     return df, y
 
+
 # function to normalise numerical columns to remove effect of inconsistent scales
 def normalise(df):
     scaler = MinMaxScaler()
@@ -49,12 +55,14 @@ def normalise(df):
 
     return X_scaled
 
+
 # preliminary cleaning
 def df_null_removal(df):
     X, y = get_Xy(df)
     X_imputed, y = med_impute(X, y)
     X_scaled_df = normalise(X_imputed)
     return X_scaled_df, y
+
 
 # funciton for feature selection
 def drop_high_corr(df, threshold=0.7):
@@ -68,9 +76,12 @@ def drop_high_corr(df, threshold=0.7):
             if abs(correlation_matrix.iloc[i, j]) > threshold:
                 if correlation_matrix.columns[j] != correlation_matrix.columns[i]:
                     high_cor.append(
-                        [correlation_matrix.columns[i],
-                         correlation_matrix.columns[j],
-                         correlation_matrix.iloc[i, j],])
+                        [
+                            correlation_matrix.columns[i],
+                            correlation_matrix.columns[j],
+                            correlation_matrix.iloc[i, j],
+                        ]
+                    )
 
     # Iterate through the list of highly correlated pairs
     for pair in high_cor:
@@ -89,28 +100,34 @@ def drop_high_corr(df, threshold=0.7):
 
     return df
 
+
 # secondary cleaning
 def df_null_corr_process(df):
     X, y = df_null_removal(df)
     return drop_high_corr(X), y
 
+
 # function to obtain train and test sets
 def get_train_test(df):
     X, y = df_null_corr_process(df)
     X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=3244)
+        X, y, test_size=0.2, random_state=3244
+    )
 
     return X_train, X_test, y_train, y_test
+
 
 # function to obtain train and test sets with sythesised instances of the minority class
 def pre_process(df):
     X, y = df_null_corr_process(df)
     X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.3, random_state=1000)
+        X, y, test_size=0.3, random_state=1000
+    )
     smote = SMOTE(random_state=0)
     X_smote, y_smote = smote.fit_resample(X_train, y_train)
 
     return X_smote, X_test, y_smote, y_test
+
 
 def plot_ANOVA_test_graph(train_acc_dict, test_acc_dict):
     # Extract keys and values from train_acc_dict and test_acc_dict
