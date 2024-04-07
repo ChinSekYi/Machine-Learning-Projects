@@ -1,5 +1,6 @@
 import warnings
 
+import data_processing as dp
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -9,8 +10,6 @@ from scipy.io import arff
 from sklearn.feature_selection import SelectKBest, f_classif
 from sklearn.metrics import accuracy_score
 from tqdm import tqdm
-
-import data_processing as dp
 
 warnings.filterwarnings("ignore")
 
