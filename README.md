@@ -80,11 +80,20 @@ X64	sales / fixed assets
 
 ## Set up virtual environment 
 To ensure collaboraters have the same packages and versions installed. 
+
+Install anaconda: https://docs.anaconda.com/free/miniconda/index.html  
+For windows installation guide: https://docs.conda.io/projects/conda/en/latest/user-guide/install/windows.html  
+
+To check if conda is installed
 ```
-conda create -n dev python=3.11 numpy pandas scikit-learn imbalanced-learn matplotlib seaborn scipy tqdm black isort
+cd /your directory/..
+conda --version
 ```
 
+Create conda virtual environment
 ```
+conda create -n dev python=3.11 numpy pandas scikit-learn imbalanced-learn matplotlib seaborn scipy tqdm black isort
+
 conda activate dev
 ```
 
