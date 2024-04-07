@@ -87,38 +87,30 @@ def drop_high_corr(df, threshold=0.7):
                 df.drop(feature2, axis=1, inplace=True)
                 dropped_features.append(feature2)
             else:
-                # print(f"Feature {feature2} not found in the DataFrame.")
-                print(
-                    "Feature '" + feature2 + "' not found in the DataFrame."
-                )  # temporary
+                print("Feature '" + feature2 + "' not found in the DataFrame.")
 
     return df
 
-
+# secondary cleaning
 def df_null_corr_process(df):
     X, y = df_null_removal(df)
     return drop_high_corr(X), y
 
-
+# function to obtain train and test sets with sythesised instances of the minority class
 def pre_process(df):
     X, y = df_null_corr_process(df)
     X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.3, random_state=1000
-    )
+        X, y, test_size=0.3, random_state=1000)
     smote = SMOTE(random_state=0)
     X_smote, y_smote = smote.fit_resample(X_train, y_train)
 
     return X_smote, X_test, y_smote, y_test
 
-
+# function to obtain train and test sets
 def get_train_test(df):
-    X, y = get_Xy(df)
-    X_imputed, y_final = med_impute(X, y)
-    X_scaled = normalise(X_imputed)
-    X_final = drop_high_corr(X_scaled)
+    X, y = df_null_corr_process(df)
     X_train, X_test, y_train, y_test = train_test_split(
-        X_final, y_final, test_size=0.2, random_state=3244
-    )
+        X, y, test_size=0.2, random_state=3244)
 
     return X_train, X_test, y_train, y_test
 
