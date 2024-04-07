@@ -1,8 +1,8 @@
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from imblearn.over_sampling import SMOTE
 from sklearn.feature_selection import SelectKBest, f_classif
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
 
@@ -23,7 +23,7 @@ def as_discrete(col):
 
 
 def get_Xy(df):
-    X = df.iloc[:, 0 : len(df) - 1]
+    X = df.iloc[:, 0 : len(df.columns) - 1]
     y = as_discrete(df.iloc[:, -1])
     return X, y
 
@@ -106,17 +106,20 @@ def drop_high_corr(df, threshold=0.7):
 
 def df_null_corr_process(df):
     X, y = df_null_removal(df)
-    return drop_high_corr(X),y
+    return drop_high_corr(X), y
+
 
 def pre_process(df):
     X, y = get_Xy(df)
-    X, y = med_impute(X, y)   
+    X, y = med_impute(X, y)
     X = normalise(X)
     X = drop_high_corr(X, threshold=0.7)
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=1000)
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.3, random_state=1000
+    )
     smote = SMOTE(random_state=0)
     X_smote, y_smote = smote.fit_resample(X_train, y_train)
-   
+
     return X_smote, X_test, y_smote, y_test
 
 
@@ -125,16 +128,71 @@ def get_train_test(df):
     X_imputed, y_final = med_impute(X, y)
     X_scaled = normalise(X_imputed)
     X_final = drop_high_corr(X_scaled)
-    X_train, X_test, y_train, y_test = train_test_split(X_final, y_final, test_size=0.2, random_state=3244)
+    X_train, X_test, y_train, y_test = train_test_split(
+        X_final, y_final, test_size=0.2, random_state=3244
+    )
 
     return X_train, X_test, y_train, y_test
 
-def get_df_with_top_k_features(k_features, X_train, X_test, y_train, y_test):
+
+def plot_ANOVA_test_graph(train_acc_dict, test_acc_dict):
+    # Extract keys and values from train_acc_dict and test_acc_dict
+    train_k_values, train_accuracy_values = zip(*train_acc_dict.items())
+    test_k_values, test_accuracy_values = zip(*test_acc_dict.items())
+
+    plt.figure(figsize=(6, 4))
+    # Plot train accuracy
+    plt.plot(
+        train_k_values, train_accuracy_values, label="Train Accuracy", color="blue"
+    )
+    # Plot test accuracy
+    plt.plot(test_k_values, test_accuracy_values, label="Test Accuracy", color="green")
+
+    # Find k values corresponding to maximum accuracies
+    best_train_k = max(train_acc_dict, key=train_acc_dict.get)
+    best_test_k = max(test_acc_dict, key=test_acc_dict.get)
+    best_train_accuracy = train_acc_dict[best_train_k]
+    best_test_accuracy = test_acc_dict[best_test_k]
+
+    # Annotate the point corresponding to the peak train accuracy
+    plt.annotate(
+        f"Max Train Accuracy\nk={best_train_k}, Acc={best_train_accuracy:.2f}",
+        xy=(best_train_k, best_train_accuracy),
+        xytext=(-30, 20),
+        textcoords="offset points",
+        arrowprops=dict(arrowstyle="->", color="blue"),
+    )
+
+    # Annotate the point corresponding to the peak test accuracy
+    plt.annotate(
+        f"Max Test Accuracy\nk={best_test_k}, Acc={best_test_accuracy:.2f}",
+        xy=(best_test_k, best_test_accuracy),
+        xytext=(30, -30),
+        textcoords="offset points",
+        arrowprops=dict(arrowstyle="->", color="green"),
+    )
+
+    # Label axes and add title
+    plt.xlabel("Number of Features (k)")
+    plt.ylabel("Accuracy")
+    plt.title("Accuracy vs. Number of Features from ANOVA test")
+
+    plt.legend()
+    plt.show()
+
+
+## Note: *args follow the convention X_train, X_test, y_train, y_test
+def get_df_with_top_k_features(k_features, *args):  # after pre_process(df)
+    X_train = args[0]
+    X_test = args[1]
+    y_train = args[2]
+    y_test = args[3]
+
     # define feature selection
     fs = SelectKBest(score_func=f_classif, k=k_features)
 
     # apply feature selection
-    X_selected = fs.fit_transform(X_train, y_train)
+    fs.fit_transform(X_train, y_train)
 
     # Take the features with the highest F-scores
     fs_scores_array = np.array(fs.scores_)
@@ -145,6 +203,33 @@ def get_df_with_top_k_features(k_features, X_train, X_test, y_train, y_test):
     # Take the top k indices
     top_indices = sorted_indices_desc[:k_features]
 
-    X_train_with_selected_x = X_train.iloc[:, top_indices]
-    X_test_with_selected_x = X_test.iloc[:, top_indices]
-    return X_train_with_selected_x, X_test_with_selected_x, y_train, y_test
+    selected_columns_X_train = X_train.iloc[:, top_indices]
+    selected_columns_X_test = X_test.iloc[:, top_indices]
+
+    return selected_columns_X_train, selected_columns_X_test, y_train, y_test
+
+
+def find_best_k_features_from_ANOVA(model, *args):
+    # model: input is *previous_args
+    #        output is train_accuracy, test_accuracy
+    X_train = args[0]
+    original_n_features = len(X_train.columns)
+
+    # find the optimum number of features that gives the best test accuracy
+    train_acc_dict = {}  # 0 is a dummy accuracy for k=0 features
+    test_acc_dict = {}
+
+    for k in range(1, original_n_features + 1):
+        train_test_dataset_after_ANOVA = get_df_with_top_k_features(k, *args)
+        train_accuracy, test_accuracy = model(*train_test_dataset_after_ANOVA)
+        train_acc_dict[k] = train_accuracy
+        test_acc_dict[k] = test_accuracy
+
+    # Find k that gives the highest accuracy
+    best_train_k = max(train_acc_dict, key=train_acc_dict.get)
+    best_test_k = max(test_acc_dict, key=test_acc_dict.get)
+
+    print(f"\033[96mBest k for train_accuracy:\033[00m {best_train_k}")
+    print(f"\033[96mBest k for test_accuracy:\033[00m {best_test_k}")
+
+    plot_ANOVA_test_graph(train_acc_dict, test_acc_dict)
