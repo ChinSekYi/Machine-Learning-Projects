@@ -92,7 +92,7 @@ conda --version
 
 Create conda virtual environment
 ```
-conda create -n dev python=3.11 numpy pandas torch torchvision scikit-learn imbalanced-learn matplotlib seaborn scipy tqdm black isort 
+conda create -n dev python=3.11 numpy pandas scikit-learn imbalanced-learn matplotlib seaborn scipy black isort 
 
 conda activate dev
 ```
