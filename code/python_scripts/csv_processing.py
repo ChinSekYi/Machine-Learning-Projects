@@ -107,11 +107,12 @@ def df_null_corr_process(df):
     return drop_high_corr(X), y
 
 
+
 # function to obtain train and test sets
 def get_train_test(df):
     X, y = df_null_corr_process(df)
     X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=3244
+        X, y, test_size=0.3, random_state=3244
     )
 
     return X_train, X_test, y_train, y_test
@@ -121,9 +122,9 @@ def get_train_test(df):
 def pre_process(df):
     X, y = df_null_corr_process(df)
     X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.3, random_state=1000
+        X, y, test_size=0.3, random_state=3244
     )
-    smote = SMOTE(random_state=0)
+    smote = SMOTE(random_state=3244)
     X_smote, y_smote = smote.fit_resample(X_train, y_train)
 
     return X_smote, X_test, y_smote, y_test
