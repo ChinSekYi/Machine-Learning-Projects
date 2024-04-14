@@ -11,7 +11,7 @@ functions starting with df_ can generate a processed dataframe directly
 """
 
 
-# function to convert target column to binary values o and 1
+# function to convert target column to binary values 0 and 1
 def as_discrete(col):
     n = len(col)
     new_col = [0] * n
