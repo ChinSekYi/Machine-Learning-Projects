@@ -107,7 +107,6 @@ def df_null_corr_process(df):
     return drop_high_corr(X), y
 
 
-
 # function to obtain train and test sets
 def get_train_test(df):
     X, y = df_null_corr_process(df)
