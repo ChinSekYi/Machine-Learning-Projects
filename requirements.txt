@@ -1,0 +1,14 @@
+numpy
+pandas
+scipy
+scikit-learn
+matplotlib
+seaborn
+plotly
+black
+isort
+pylint
+pytest
+nbval
+ipykernel
+requests
