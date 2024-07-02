@@ -9,7 +9,7 @@ format:
 	isort *.py
 	black *.py
 
-lint:
-	pylint --disable=R,C --nbval cluster-analysis/cluster-analysis.ipynb
+lint-notebooks:
+	python -m pytest --nbval cluster-analysis/cluster-analysis.ipynb
 
-all: install format lint
+all: install format lint-notebooks
