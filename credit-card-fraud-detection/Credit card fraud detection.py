@@ -2,8 +2,7 @@ import numpy as np  # for making arrays
 import pandas as pd  # to process csv files & make dataframes
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
-from sklearn.model_selection import \
-    train_test_split  # pip install -U scikit-learn
+from sklearn.model_selection import train_test_split  # pip install -U scikit-learn
 
 # load dataset to dataframe
 credit_card_data = pd.read_csv("creditcard.csv")

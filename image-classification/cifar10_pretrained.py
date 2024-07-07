@@ -17,6 +17,11 @@ from sklearn.model_selection import train_test_split
 from torch.optim import lr_scheduler
 from torchvision import datasets, models, transforms
 
+"""
+Training on CIFAR10 dataset using a Convolutional Neural Network (CNN) using pre-trained models.
+"""
+
+
 cudnn.benchmark = True  # enables cuDNN to optimise the use of convolution algorithms
 
 plt.ion()  # for interactive mode

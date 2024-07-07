@@ -7,6 +7,10 @@ import torch.optim as optim
 import torchvision
 import torchvision.transforms as transforms
 
+"""
+Training on CIFAR10 dataset using a Convolutional Neural Network (CNN) from scratch.
+"""
+
 transform = transforms.Compose(
     [
         transforms.ToTensor(),
