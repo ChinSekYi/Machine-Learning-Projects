@@ -35,13 +35,13 @@ Arguments:
 - `lr` -> learning rate of the gradient descent (how big of a step to take)   
 - `momentum` -> helps accelerate gradient vectors in the right directions, which leads to faster converging.  
 
- <br>
+ <br></br>
 Connection between `loss.backward()` and `optimiser.step()` 
 - Recall that when initializing optimizer you explicitly tell it what parameters (tensors) of the model it should be updating.  
 - The gradients are "stored" by the tensors themselves (they have a grad and a requires_grad attributes) once you call backward() on the loss.  
 - After computing the gradients for all tensors in the model, calling optimizer.step() makes the optimizer iterate over all parameters (tensors) it is supposed to update and use their internally stored grad to update their values. 
 
-<br>
+<br></br>
 Why zero the gradients `optimizer.zero_grad()`?   
 - Once you've completed a step, you don't really need to keep track of your previous suggestion (i.e. gradients) of where to step. By zeroing the gradients, you are throwing away this information. Some optimizers already keep track of this information automatically and internally.   
 - With the next batch of inputs, you begin from a clean slate to suggest where to step next. This suggestion is pure and not influenced by the past. You then feed this "pure" information to the optimizer, which then decides exactly where to step.   
