@@ -1,14 +1,12 @@
-import numpy as np  # for making arrays
-import pandas as pd  # to process csv files & make dataframes
+import numpy as np
+import pandas as pd
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
-from sklearn.model_selection import train_test_split  # pip install -U scikit-learn
+from sklearn.model_selection import train_test_split
 
 # load dataset to dataframe
 credit_card_data = pd.read_csv("creditcard.csv")
 credit_card_data.head()
-
-# credit_card_data.info()
 
 # check number of missing values in each column
 sum = credit_card_data.isnull().sum()
@@ -44,25 +42,18 @@ new_mean = new_dataset.groupby(
 X = new_dataset.drop(columns="Class", axis=1)
 Y = new_dataset["Class"]
 
-# split data into training data & testing data
 X_train, X_test, Y_train, Y_test = train_test_split(
     X, Y, test_size=0.2, stratify=Y, random_state=2
-)  # stratify -> evenly split class 0/1 in training and test dataset #random state -> generator used to shuffle data
+)
 
-# Model training - Logistic regression
 model = LogisticRegression()
-
-# training model
 model.fit(X_train, Y_train)
 
-# model evaluation - accuracy score
+# model evaluation
 X_train_prediction = model.predict(X_train)
 training_data_accuracy = accuracy_score(X_train_prediction, Y_train)
 print(training_data_accuracy)
 
-
 X_test_prediction = model.predict(X_test)
 test_data_accuracy = accuracy_score(X_test_prediction, Y_test)
 print(test_data_accuracy)
-
-# Comment: if scores between training and test data is very different, the model might be underfitted or overfitted
