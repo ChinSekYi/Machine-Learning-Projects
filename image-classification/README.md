@@ -4,9 +4,9 @@ In this project, we will train a convolutional neural network for ants and bees 
 ## Dataset
 - 120 training images each for ants and bees
 - 75 validation images for each class
-- This dataset is a very small subset of imagenet.
+- This dataset is a very small subset of imagenet
 
-## Terms used in CNN project
+## Important terms
 Convolutional layers 
 -  turn input signals of several channels into feature maps/activation maps 
 
@@ -29,14 +29,11 @@ CrossEntropyLoss
 
 
 ## Pytorch code
-Pytorch's optim  
-- constructs an optimizer object that holds the current state of the object, it then updates the parameters based on the computed gradients.  
-- a fundamental tool for the network to learn and update its weights from backpropagation.   
-
-`optim.SGD` -> stochastic gradient desccent   
-`net.parameters()` -> gets the learnable parameters of the CNN   
-`lr` -> learning rate of the gradient descent (how big of a step to take)   
-`momentum` -> helps accelerate gradient vectors in the right directions, which leads to faster converging.  
+Pytorch's `optim.SGD` stochastic gradient desccent:
+Arguments:
+- `net.parameters()` -> gets the learnable parameters of the CNN   
+- `lr` -> learning rate of the gradient descent (how big of a step to take)   
+- `momentum` -> helps accelerate gradient vectors in the right directions, which leads to faster converging.  
 
  
 Connection between `loss.backward()` and `optimiser.step()` 
@@ -50,5 +47,5 @@ Why zero the gradients `optimizer.zero_grad()`?
 - With the next batch of inputs, you begin from a clean slate to suggest where to step next. This suggestion is pure and not influenced by the past. You then feed this "pure" information to the optimizer, which then decides exactly where to step.   
 - Of course, you can decide to hold onto previous gradients, but that information is somewhat outdated since you're in an entirely new spot on the loss surface. Who is to say that the best direction to go next is still the same as the previous? It might be completely different! That's why most popular optimization algorithms throw most of that outdated information away (by zeroing the gradients).   
 
-### Reference:
+## Reference:
 - <a href="https://pytorch.org/tutorials/beginner/transfer_learning_tutorial.html">Transfer learning using Pytorch</a>
